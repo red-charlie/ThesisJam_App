@@ -49,6 +49,7 @@ const wss = new WebSocket.Server({server});
 function noop() { };
 function heartbeat() {
     this.isAlive = true;
+   // print(rooms);
 };
 
 //are people still here?
@@ -69,6 +70,7 @@ wss.on('connection', (ws) => {
     ws.nick = '';
     ws.inGame = false;
     ws.on('pong', heartbeat);
+   // console.log(`Someone Has connected with userID: ` data.id);
 
     ws.on('message', (message) => {
         var thesisMSG = JSON.parse(message); // okay so thesisMSG replaces radishMSG in all scripts from here on out okay?
@@ -88,7 +90,8 @@ wss.on('connection', (ws) => {
             }
         break;
 
-        case 'ROOM_JOIN_REQUEST': {
+            case 'ROOM_JOIN_REQUEST': {
+               
                 if (!rooms.has(ws.room)) {
                     //Tried to connect to a room that doesn't exist
                     const response = {
@@ -97,6 +100,9 @@ wss.on('connection', (ws) => {
                         nickname: ws.nick
                     }
                     ws.send(JSON.stringify(response));
+                }
+                else {
+                    console.log(`attempting to join a room`)
                 }
             }
         break;

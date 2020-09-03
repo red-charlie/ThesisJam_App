@@ -50,7 +50,7 @@ io.on("connection", socket => {
             //update current player count here please [charlie]
 
             //if 16 people are already in
-            if (res.userCount >= 16) {
+            if (res.userCount >= 1) {
                 res.joined = false;
                 res.username = "";
                 res.failReason = "Room has too many players";

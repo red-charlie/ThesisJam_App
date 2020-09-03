@@ -20,9 +20,7 @@ app.get("/", (req, res) => {
 
 io.on("connection", socket => {
 
-    socket.on("test", () => {
-        console.log('you got a test!');
-    });
+    
 
     socket.on("request room", () => {
         let res = {};
@@ -225,7 +223,7 @@ io.on("connection", socket => {
     //    }, 500);
     //});
 
-    socket.on("enter message", payload => {
+    socket.on("enter submission", payload => {
         console.log('I have received a message');
         let payloadObj;
         try {
@@ -238,14 +236,14 @@ io.on("connection", socket => {
         
         let res = { //user message
             user: payloadObj.user,
-            message: payloadObj.message
+            submission: payloadObj.submission
             
           
         };
-        res.user.message.UpdateString(payload.message)
+        res.user.submission.UpdateString(payload.submission)
 
         io.to(payloadObj.roomcode).emit(
-            "enter message",
+            "enter submission",
             JSON.stringify(res)
         );
     });

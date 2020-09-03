@@ -231,13 +231,15 @@ io.on("connection", socket => {
             socket.emit("game_error", JSON.stringify({ "game_error": "Invalid json format" }));
             return;
         }
+        
         let res = { //user message
             user: payloadObj.user,
             message: payloadObj.message
-            //user.message.UpdateMessage(payload.message)
             
-            
+          
         };
+        res.user.message.UpdateString(payload.message)
+
         io.to(payloadObj.roomcode).emit(
             "enter message",
             JSON.stringify(res)

@@ -20,6 +20,10 @@ app.get("/", (req, res) => {
 
 io.on("connection", socket => {
 
+    socket.on("test", () => {
+        console.log('you got a test!');
+    });
+
     socket.on("request room", () => {
         let res = {};
         let room = new Room(getRandomRoomCode()); // Pass in a randomroomcode

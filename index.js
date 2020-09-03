@@ -222,6 +222,7 @@ io.on("connection", socket => {
     //});
 
     socket.on("enter message", payload => {
+        console.log('I have received a message');
         let payloadObj;
         try {
             payloadObj = JSON.parse(payload);
@@ -233,6 +234,7 @@ io.on("connection", socket => {
         let res = { //user message
             user: payloadObj.user,
             message: payloadObj.message
+            //user.message.UpdateMessage(payload.message)
             
             
         };

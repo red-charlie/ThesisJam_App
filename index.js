@@ -14,7 +14,7 @@ let rooms = new Map();
 
 app.get("/", (req, res) => {
     res.send(
-        "<p>This is the Hackbox backend. It is meant to be accessed with socket.io -- This version is from 10:15 9/2</p>"
+        "<p>This is the Hackbox backend. It is meant to be accessed with socket.io -- This version is from 5am 9/3</p>"
     );
 });
 
@@ -49,17 +49,18 @@ io.on("connection", socket => {
             res.userCount = room.users.length;
             //update current player count here please [charlie]
 
-            //if 16 people are already in [charlie this isn't working come back later]
-            if (room.users.length >= 16) {
-                res.joined = false;
-                res.username = payloadObj.username;
-                res.failReason = "Room has too many players";
-                socket.emit("join room", JSON.stringify(res));
-                return;
-            }
+            ////if 16 people are already in [charlie this isn't working come back later]
+            //if (room.users.length = 16) {
+            //    console.log('hooray you fit - just kidding');
+            //    res.joined = false;
+            //    res.username = payloadObj.username;
+            //    res.failReason = "Room has too many players";
+            //    socket.emit("join room", JSON.stringify(res));
+            //    return;
+            //}
 
             // If this room already has this username
-            else if (room.hasUser(payloadObj.username)) {
+             if (room.hasUser(payloadObj.username)) {
                 res.joined = false;
                 res.username = "";
                 res.failReason = "Username is taken please use another name";
@@ -71,9 +72,10 @@ io.on("connection", socket => {
                 res.username = payloadObj.username;
                 res.failReason = "";
                 res.userCount = room.users.length;
+                console.log('you have joined should be flipping over now');
 
                 // Notify the entire room of success of new player joining
-                //[charlie] is there someway to cap playesrs to 16 for tonmorrows test
+                
 
                 io.to(payloadObj.roomcode).emit("join room", JSON.stringify(res));
                 io.to(payloadObj.roomcode).emit("join room", JSON.stringify(res));
@@ -271,12 +273,12 @@ io.on("connection", socket => {
             payloadObj = JSON.parse(payload);
         }
         catch (e) {
-            socket.emit("game_error", JSON.stringify({ "game_error": "Invalid json format" }));
+            socket.emit("game_error", JSON.stringify({ "game_error": "Invalid json format-" }));
             return;
         }
         let room = rooms.get(payloadObj.roomcode);
         if (!room) {
-            socket.emit("game_error", JSON.stringify({ "game_error": "Roomcode does not exist" }));
+            socket.emit("game_error", JSON.stringify({ "game_error": "Roomcode does not exist-" }));
             return;
         }
 

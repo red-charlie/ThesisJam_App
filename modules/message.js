@@ -6,7 +6,7 @@
 class Message
 {
     constructor() {
-        console.log('there is ablank message');
+        //console.log('there is a blank message, a person has connected basically');
         this.currentMessage = "";
         //this.scoreOverTime = [0,0]; //keeps track of scores spanning the last 5 seconds
     }
@@ -43,7 +43,7 @@ class Message
     }
 
     ClearString() {
-        console.log('I am clearning the current menssage');
+        console.log('I am clearning the current message');
         this.currentMessage = "";
     }
 

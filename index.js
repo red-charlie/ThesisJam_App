@@ -4,6 +4,8 @@ const io = require("socket.io")(http, { pingInterval: 500 });
 const fs = require("fs");
 const Room = require("./modules/room");
 const User = require("./modules/user");
+//var mongo = require('mongodb').MongoClient;
+//var mongourl = "";
 
 const PORT = process.env.PORT || 3000;
 let rooms = new Map();
@@ -35,6 +37,7 @@ io.on("connection", socket => {
     });
 
     socket.on("join room", payload => {
+        console.log('I got a join room request');
         let payloadObj;
         try {
             payloadObj = JSON.parse(payload);

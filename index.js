@@ -251,7 +251,7 @@ io.on("connection", socket => {
 
        
 
-        );
+        //);
     });
 
     //socket.on("vote", payload => {

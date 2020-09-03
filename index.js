@@ -50,7 +50,7 @@ io.on("connection", socket => {
             //update current player count here please [charlie]
 
             //if 16 people are already in [charlie this isn't working come back later]
-            if (room.users.length >= 1) {
+            if (room.users.length >= 16) {
                 res.joined = false;
                 res.username = payloadObj.username;
                 res.failReason = "Room has too many players";
@@ -62,11 +62,11 @@ io.on("connection", socket => {
             else if (room.hasUser(payloadObj.username)) {
                 res.joined = false;
                 res.username = "";
-                res.failReason = "Username is taken, please use another name";
+                res.failReason = "Username is taken please use another name";
                 socket.emit("join room", JSON.stringify(res));
             } else {
                 socket.join(payloadObj.roomcode);
-                room.users.push(new Player(payloadObj.username));
+                room.users.push(new User(payloadObj.username));
                 res.joined = true;
                 res.username = payloadObj.username;
                 res.failReason = "";
@@ -81,9 +81,10 @@ io.on("connection", socket => {
         } else {
             res.joined = false;
             res.username = "";
-            res.failReason = "Room does not exist";
-            res.playerCount = 0;
+            res.failReason = "Room does not exist please check room code";
+            res.userCount = 0;
             socket.emit("join room", JSON.stringify(res));
+            //[charlie] make sure that the join room command moves into the message bit
 
         }
     });
@@ -100,7 +101,7 @@ io.on("connection", socket => {
         if (rooms.has(payloadObj.roomcode)) {
             let room = rooms.get(payloadObj.roomcode);
             // If this room already has this username, it's a valid rejoin
-            if (room.hasPlayer(payloadObj.username)) {
+            if (room.hasUser(payloadObj.username)) {
                 socket.join(payloadObj.roomcode);
                 res.rejoined = true;
                 res.username = payloadObj.username;
@@ -122,101 +123,101 @@ io.on("connection", socket => {
     });
 
     //remove everybody is in and just put this on submission into room
-    socket.on("everybody in", payload => {
-        let payloadObj;
-        try {
-            payloadObj = JSON.parse(payload);
-        }
-        catch (e) {
-            socket.emit("game_error", JSON.stringify({ "game_error": "Invalid json format" }));
-            return;
-        }
-        let res = {};
-        // Get and remove a random category from this room
-        let room = rooms.get(payloadObj.roomcode);
-        if (!room) {
-            socket.emit("game_error", JSON.stringify({ "game_error": "Roomcode does not exist" }));
-            return;
-        }
-        if (room.players.length < 2) {
-            socket.emit("game_error", JSON.stringify({ "game_error": "Room does not have enough players" }));
-            return;
-        }
+    //socket.on("everybody in", payload => {
+    //    let payloadObj;
+    //    try {
+    //        payloadObj = JSON.parse(payload);
+    //    }
+    //    catch (e) {
+    //        socket.emit("game_error", JSON.stringify({ "game_error": "Invalid json format" }));
+    //        return;
+    //    }
+    //    let res = {};
+    //    // Get and remove a random category from this room
+    //    let room = rooms.get(payloadObj.roomcode);
+    //    if (!room) {
+    //        socket.emit("game_error", JSON.stringify({ "game_error": "Roomcode does not exist" }));
+    //        return;
+    //    }
+    //    if (room.players.length < 2) {
+    //        socket.emit("game_error", JSON.stringify({ "game_error": "Room does not have enough players" }));
+    //        return;
+    //    }
 
-        if (room.inProgress) {
-            socket.emit("game_error", JSON.stringify({ "game_error": "Game is already in progress" }));
-            return;
-        }
-        io.to(payloadObj.roomcode).emit("everybody in");
+    //    if (room.inProgress) {
+    //        socket.emit("game_error", JSON.stringify({ "game_error": "Game is already in progress" }));
+    //        return;
+    //    }
+    //    io.to(payloadObj.roomcode).emit("everybody in");
 
-    });
+    //});
 
     //remove start game
-    socket.on("start game", payload => {
-        let payloadObj;
-        try {
-            payloadObj = JSON.parse(payload);
-        }
-        catch (e) {
-            socket.emit("game_error", JSON.stringify({ "game_error": "Invalid json format" }));
-            return;
-        }
-        let res = {};
-        // Get and remove a random category from this room
-        let room = rooms.get(payloadObj.roomcode);
-        if (!room) {
-            socket.emit("game_error", JSON.stringify({ "game_error": "Roomcode does not exist, sorry!" }));
-            return;
-        }
+    //socket.on("start game", payload => {
+    //    let payloadObj;
+    //    try {
+    //        payloadObj = JSON.parse(payload);
+    //    }
+    //    catch (e) {
+    //        socket.emit("game_error", JSON.stringify({ "game_error": "Invalid json format" }));
+    //        return;
+    //    }
+    //    let res = {};
+    //    // Get and remove a random category from this room
+    //    let room = rooms.get(payloadObj.roomcode);
+    //    if (!room) {
+    //        socket.emit("game_error", JSON.stringify({ "game_error": "Roomcode does not exist, sorry!" }));
+    //        return;
+    //    }
         
 
         
 
-        // TODO explore condition where all categories are played
-        let category = room.getAndRemoveRandomCategory();
-        res.category = category;
-        // Pick two random sockets to be the players
-        let selectedPlayers = room.selectPlayers();
-        res.player1Name = selectedPlayers[0].username;
-        res.player2Name = selectedPlayers[1].username;
-        io.to(payloadObj.roomcode).emit("start game", JSON.stringify(res));
+    //    // TODO explore condition where all categories are played
+    //    let category = room.getAndRemoveRandomCategory();
+    //    res.category = category;
+    //    // Pick two random sockets to be the players
+    //    let selectedPlayers = room.selectPlayers();
+    //    res.player1Name = selectedPlayers[0].username;
+    //    res.player2Name = selectedPlayers[1].username;
+    //    io.to(payloadObj.roomcode).emit("start game", JSON.stringify(res));
 
-        room.resetLifetime(); //reset the game lifetime
-        room.inProgress = true;
+    //    room.resetLifetime(); //reset the game lifetime
+    //    room.inProgress = true;
 
-        // Broadcast an initial time changed event
-        let initTimeChangedRes = {};
-        initTimeChangedRes.time = room.lifetime;
-        io.to(payloadObj.roomcode).emit(
-            "time changed",
-            JSON.stringify(initTimeChangedRes)
-        );
-        // Start the timer event
-        let interval = setInterval(() => {
-            let res = {};
-            room.lifetime -= 0.5;
-            res.time = room.lifetime;
+    //    // Broadcast an initial time changed event
+    //    let initTimeChangedRes = {};
+    //    initTimeChangedRes.time = room.lifetime;
+    //    io.to(payloadObj.roomcode).emit(
+    //        "time changed",
+    //        JSON.stringify(initTimeChangedRes)
+    //    );
+    //    // Start the timer event
+    //    let interval = setInterval(() => {
+    //        let res = {};
+    //        room.lifetime -= 0.5;
+    //        res.time = room.lifetime;
 
-            room.shiftScores();
+    //        room.shiftScores();
 
-            io.to(payloadObj.roomcode).emit(
-                "time changed",
-                JSON.stringify(res)
-            );
-            if (res.time <= 0) {
-                let timeoutRes = {
-                    winner: room.getDisplayPercentage() < .5 ? 0 : 1
-                }
-                room.inProgress = false;
-                io.to(payloadObj.roomcode).emit("timeout", JSON.stringify(timeoutRes));
-                clearInterval(interval);
+    //        io.to(payloadObj.roomcode).emit(
+    //            "time changed",
+    //            JSON.stringify(res)
+    //        );
+    //        if (res.time <= 0) {
+    //            let timeoutRes = {
+    //                winner: room.getDisplayPercentage() < .5 ? 0 : 1
+    //            }
+    //            room.inProgress = false;
+    //            io.to(payloadObj.roomcode).emit("timeout", JSON.stringify(timeoutRes));
+    //            clearInterval(interval);
 
-                //reset the scores of each player
-                room.selectedPlayers[0].score.ClearScore();
-                room.selectedPlayers[1].score.ClearScore();
-            }
-        }, 500);
-    });
+    //            //reset the scores of each player
+    //            room.selectedPlayers[0].score.ClearScore();
+    //            room.selectedPlayers[1].score.ClearScore();
+    //        }
+    //    }, 500);
+    //});
 
     socket.on("enter message", payload => {
         let payloadObj;
@@ -227,40 +228,40 @@ io.on("connection", socket => {
             socket.emit("game_error", JSON.stringify({ "game_error": "Invalid json format" }));
             return;
         }
-        let res = {
-            player: payloadObj.player,
-            submission: payloadObj.submission
+        let res = { //user message
+            user: payloadObj.user,
+            message: payloadObj.message
         };
         io.to(payloadObj.roomcode).emit(
-            "enter submission",
+            "enter message",
             JSON.stringify(res)
         );
     });
 
-    socket.on("vote", payload => {
-        let payloadObj;
-        try {
-            payloadObj = JSON.parse(payload);
-        }
-        catch (e) {
-            socket.emit("game_error", JSON.stringify({ "game_error": "Invalid json format" }));
-            return;
-        }
-        let room = rooms.get(payloadObj.roomcode);
-        if (!room) {
-            socket.emit("game_error", JSON.stringify({ "game_error": "Roomcode does not exist" }));
-            return;
-        }
-        if (!("player" in payloadObj)) {
-            socket.emit("game_error", JSON.stringify({ "game_error": "player missing from json object" }));
-            return;
-        }
-        let votedPlayer = room.selectedPlayers[payloadObj.player];
-        votedPlayer.score.AddPoint();
-        let percentage = room.getDisplayPercentage();
-        let res = { percentage };
-        io.to(payloadObj.roomcode).emit("vote", JSON.stringify(res));
-    });
+    //socket.on("vote", payload => {
+    //    let payloadObj;
+    //    try {
+    //        payloadObj = JSON.parse(payload);
+    //    }
+    //    catch (e) {
+    //        socket.emit("game_error", JSON.stringify({ "game_error": "Invalid json format" }));
+    //        return;
+    //    }
+    //    let room = rooms.get(payloadObj.roomcode);
+    //    if (!room) {
+    //        socket.emit("game_error", JSON.stringify({ "game_error": "Roomcode does not exist" }));
+    //        return;
+    //    }
+    //    if (!("player" in payloadObj)) {
+    //        socket.emit("game_error", JSON.stringify({ "game_error": "player missing from json object" }));
+    //        return;
+    //    }
+    //    let votedPlayer = room.selectedPlayers[payloadObj.player];
+    //    votedPlayer.score.AddPoint();
+    //    let percentage = room.getDisplayPercentage();
+    //    let res = { percentage };
+    //    io.to(payloadObj.roomcode).emit("vote", JSON.stringify(res));
+    //});
 
     socket.on("close room", (payload) => {
         let payloadObj;

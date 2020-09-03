@@ -78,7 +78,7 @@ io.on("connection", socket => {
                 
 
                 io.to(payloadObj.roomcode).emit("join room", JSON.stringify(res));
-                io.to(payloadObj.roomcode).emit("join room", JSON.stringify(res));
+               // io.to(payloadObj.roomcode).emit("join room", JSON.stringify(res));
             }
         } else {
             res.joined = false;

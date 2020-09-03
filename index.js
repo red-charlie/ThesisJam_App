@@ -14,7 +14,7 @@ let rooms = new Map();
 
 app.get("/", (req, res) => {
     res.send(
-        "<p>This is the Hackbox backend. It is meant to be accessed with socket.io </p>"
+        "<p>This is the Hackbox backend. It is meant to be accessed with socket.io -- This version is from 10:15 9/2</p>"
     );
 });
 

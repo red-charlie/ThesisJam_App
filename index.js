@@ -243,7 +243,7 @@ io.on("connection", socket => {
             //submission: payloadObj.submission
             
           
-        };
+        }
         //res.user.message.UpdateString(payload.submission)
 
         //io.to(payloadObj.roomcode).emit(

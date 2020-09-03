@@ -52,7 +52,7 @@ io.on("connection", socket => {
             //if 16 people are already in [charlie this isn't working come back later]
             if (room.users.length >= 1) {
                 res.joined = false;
-                res.username = "";
+                res.username = payloadObj.username;
                 res.failReason = "Room has too many players";
                 socket.emit("join room", JSON.stringify(res));
                 return;
@@ -62,7 +62,7 @@ io.on("connection", socket => {
             else if (room.hasUser(payloadObj.username)) {
                 res.joined = false;
                 res.username = "";
-                res.failReason = "Username is taken";
+                res.failReason = "Username is taken, please use another name";
                 socket.emit("join room", JSON.stringify(res));
             } else {
                 socket.join(payloadObj.roomcode);

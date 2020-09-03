@@ -165,18 +165,12 @@ io.on("connection", socket => {
         // Get and remove a random category from this room
         let room = rooms.get(payloadObj.roomcode);
         if (!room) {
-            socket.emit("game_error", JSON.stringify({ "game_error": "Roomcode does not exist" }));
+            socket.emit("game_error", JSON.stringify({ "game_error": "Roomcode does not exist, sorry!" }));
             return;
         }
-        if (room.players.length < 2) {
-            socket.emit("game_error", JSON.stringify({ "game_error": "Room does not have enough players" }));
-            return;
-        }
+        
 
-        if (room.inProgress) {
-            socket.emit("game_error", JSON.stringify({ "game_error": "Game is already in progress" }));
-            return;
-        }
+        
 
         // TODO explore condition where all categories are played
         let category = room.getAndRemoveRandomCategory();

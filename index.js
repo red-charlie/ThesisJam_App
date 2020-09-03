@@ -22,7 +22,7 @@ app.get("/", (req, res) => {
 
 io.on("connection", socket => {
 
-    
+
 
     socket.on("request room", () => {
         let res = {};
@@ -65,7 +65,7 @@ io.on("connection", socket => {
             //}
 
             // If this room already has this username
-             if (room.hasUser(payloadObj.username)) {
+            if (room.hasUser(payloadObj.username)) {
                 res.joined = false;
                 res.username = "";
                 res.failReason = "Username is taken please use another name";
@@ -80,10 +80,10 @@ io.on("connection", socket => {
                 console.log('you have joined should be flipping over now');
 
                 // Notify the entire room of success of new player joining
-                
+
 
                 io.to(payloadObj.roomcode).emit("join room", JSON.stringify(res));
-               // io.to(payloadObj.roomcode).emit("join room", JSON.stringify(res));
+                // io.to(payloadObj.roomcode).emit("join room", JSON.stringify(res));
             }
         } else {
             res.joined = false;
@@ -176,9 +176,9 @@ io.on("connection", socket => {
     //        socket.emit("game_error", JSON.stringify({ "game_error": "Roomcode does not exist, sorry!" }));
     //        return;
     //    }
-        
 
-        
+
+
 
     //    // TODO explore condition where all categories are played
     //    let category = room.getAndRemoveRandomCategory();
@@ -238,12 +238,12 @@ io.on("connection", socket => {
             return;
         }
 
-            //let res = { //user message
-            //user: payloadObj.username,
-            //submission: payloadObj.submission
-            
-          
-        }
+        //let res = { //user message
+        //user: payloadObj.username,
+        //submission: payloadObj.submission
+
+
+    }}
         //res.user.message.UpdateString(payload.submission)
 
         //io.to(payloadObj.roomcode).emit(

@@ -5,7 +5,7 @@ const fs = require("fs");
 const Room = require("./modules/room");
 const User = require("./modules/user");
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 3000;
 let rooms = new Map();
 
 // Prepare csv data

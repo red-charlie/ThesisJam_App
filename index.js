@@ -246,8 +246,13 @@ io.on("connection", socket => {
         //res.user.message.UpdateString(payload.submission)
 
         io.to(payloadObj.roomcode).emit(
-            "enter message",
-            JSON.stringify(res)
+            "enter user",
+            JSON.stringify(res.user));
+
+       io.to(payloadObj.roomcode).emit(
+                "enter message",
+                JSON.stringify(res.submission)
+
         );
     });
 

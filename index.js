@@ -238,7 +238,7 @@ io.on("connection", socket => {
         }
         
         let res = { //user message
-            user: payloadObj.user,
+            user: payloadObj.username,
             submission: payloadObj.submission
             
           

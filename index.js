@@ -3,14 +3,14 @@ const http = require("http").Server(app);
 const io = require("socket.io")(http, { pingInterval: 500 });
 const fs = require("fs");
 const Room = require("./modules/room");
-const Player = require("./modules/player");
+const User = require("./modules/user");
 
 const PORT = process.env.PORT || 3000;
 let rooms = new Map();
 
 // Prepare csv data
-let contents = fs.readFileSync("./data/categories.csv", "UTF8");
-let categories = contents.split(/,/gm);
+//let contents = fs.readFileSync("./data/categories.csv", "UTF8");
+//let categories = contents.split(/,/gm);
 
 app.get("/", (req, res) => {
     res.send(
@@ -22,7 +22,7 @@ io.on("connection", socket => {
 
     socket.on("request room", () => {
         let res = {};
-        let room = new Room(getRandomRoomCode(), categories.slice(0)); // Pass in a copy of categories
+        let room = new Room(getRandomRoomCode()); // Pass in a randomroomcode
         rooms.set(room.code, room);
         res.roomcode = room.code;
 
@@ -41,35 +41,41 @@ io.on("connection", socket => {
             socket.emit("game_error", JSON.stringify({ "game_error": "Invalid json format" }));
             return;
         }
-        let res = {};
+        let res = {}; //userCount, joined, username, failReason, 
         if (rooms.has(payloadObj.roomcode)) {
             let room = rooms.get(payloadObj.roomcode);
 
 
-            res.playerCount = room.players.length;
+            res.userCount = room.users.length;
+            //update current player count here please [charlie]
 
-            if (room.inProgress) {
+            //if 16 people are already in
+            if (res.userCount >= 16) {
                 res.joined = false;
                 res.username = "";
-                res.failReason = "Game is already in progress";
+                res.failReason = "Room has too many players";
                 socket.emit("join room", JSON.stringify(res));
                 return;
             }
 
             // If this room already has this username
-            if (room.hasPlayer(payloadObj.username)) {
+            else if (room.hasUser(payloadObj.username)) {
                 res.joined = false;
                 res.username = "";
                 res.failReason = "Username is taken";
                 socket.emit("join room", JSON.stringify(res));
             } else {
                 socket.join(payloadObj.roomcode);
-                room.players.push(new Player(payloadObj.username));
+                room.users.push(new Player(payloadObj.username));
                 res.joined = true;
                 res.username = payloadObj.username;
                 res.failReason = "";
-                res.playerCount = room.players.length;
-                // Notify the entire room of success
+                res.userCount = room.users.length;
+
+                // Notify the entire room of success of new player joining
+                //[charlie] is there someway to cap playesrs to 16 for tonmorrows test
+
+                io.to(payloadObj.roomcode).emit("join room", JSON.stringify(res));
                 io.to(payloadObj.roomcode).emit("join room", JSON.stringify(res));
             }
         } else {
@@ -115,6 +121,7 @@ io.on("connection", socket => {
         }
     });
 
+    //remove everybody is in and just put this on submission into room
     socket.on("everybody in", payload => {
         let payloadObj;
         try {
@@ -144,6 +151,7 @@ io.on("connection", socket => {
 
     });
 
+    //remove start game
     socket.on("start game", payload => {
         let payloadObj;
         try {
@@ -216,7 +224,7 @@ io.on("connection", socket => {
         }, 500);
     });
 
-    socket.on("enter submission", payload => {
+    socket.on("enter message", payload => {
         let payloadObj;
         try {
             payloadObj = JSON.parse(payload);
@@ -298,6 +306,7 @@ http.listen(PORT, () => {
 });
 
 /**
+ * This is cute as hell way to do this but we might want a curse word filter
  * Returns a unique, random room code
  */
 function getRandomRoomCode() {

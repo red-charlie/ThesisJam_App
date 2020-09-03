@@ -1,4 +1,4 @@
-const Score = require("./score");
+const Message = require("./message");
 
 /**
  * Represents a player in the game
@@ -7,7 +7,7 @@ const Score = require("./score");
 class Player {
     constructor(username) {
         this.username = username;
-        this.score = new Score();
+        this.message = new Message();
     }
 }
 module.exports = Player;

@@ -1,4 +1,4 @@
-const Player = require("./player");
+const User = require("./user");
 /**
  * Structure which describes a room
  */
@@ -8,23 +8,24 @@ class Room {
      * @param {String} code room code
      * @param {String[]} categories array of possible categories
      */
-    constructor(code, categories) {
+    constructor(code) {
         this.code = code;
-        this.categories = categories;
-        this.players = []; // Array of player objects
-        this.selectedPlayers = []; // Array of selected player indexes
-        this.playedplayers = []; // Array of played player indexes
-        this.startLifetime = 30;
-        this.resetLifetime(); // In seconds TODO make this customizable
-        this.inProgress = false;
-        this.unselectedPlayers=[];
+        //this.categories = categories;
+        this.users = []; // Array of player objects
+        //this.selectedPlayers = []; // Array of selected player indexes
+        //this.playedplayers = []; // Array of played player indexes
+        //this.startLifetime = 1000;
+       //this.resetLifetime(); // In seconds TODO make this customizable
+        //this.inProgress = false;
+        //this.unselectedPlayers=[];
     }
 
     /**
      * Resets the lifetime of the room
      */
     resetLifetime() {
-        this.lifetime = this.startLifetime;
+        console.log('This is resetLifetime and it is returning nothing, you should probably check that out')
+        //this.lifetime = this.startLifetime;
     }
 
 
@@ -32,70 +33,71 @@ class Room {
      * Returns true if this room has the provided username, false otherwise
      * @param {String} username
      */
-    hasPlayer(username) {
-        return this.players.filter(player => player.username == username).length == 1;
+    hasUser(username) {
+        return this.users.filter(user => user.username == username).length == 1;
     }
 
     /**
      * Selects the two players. After this is called, selectedPlayers will be up to date.
      * @return {Player[]} The selected players
      */
-    selectPlayers() {
-        this.selectedPlayers = [];
-        this.unselectedPlayers = this.players.filter(player=> !this.playedplayers.includes(player));
+    //selectplayers() {
+    //    this.selectedplayers = [];
+    //    this.unselectedplayers = this.players.filter(player=> !this.playedplayers.includes(player));
 
-        for (let i = 0; i < 2; ++i) {
-            let randI = parseInt(Math.random() * this.unselectedPlayers.length);
-            let curSelectedPlayer = this.unselectedPlayers[randI];
-            this.selectedPlayers.push(curSelectedPlayer);
-            this.playedplayers.push(curSelectedPlayer);
+    //    for (let i = 0; i < 2; ++i) {
+    //        let randi = parseint(math.random() * this.unselectedplayers.length);
+    //        let curselectedplayer = this.unselectedplayers[randi];
+    //        this.selectedplayers.push(curselectedplayer);
+    //        this.playedplayers.push(curselectedplayer);
 
-            this.unselectedPlayers.splice(this.unselectedPlayers.indexOf(curSelectedPlayer), 1);
-            if (this.unselectedPlayers.length == 0) {
-                this.playedplayers=[];// reset the playedplayer list
-                this.playedplayers.push(curSelectedPlayer);
-                this.unselectedPlayers = this.players.filter(player=> !this.playedplayers.includes(player));
-            }
-        }
+    //        this.unselectedplayers.splice(this.unselectedplayers.indexof(curselectedplayer), 1);
+    //        if (this.unselectedplayers.length == 0) {
+    //            this.playedplayers=[];// reset the playedplayer list
+    //            this.playedplayers.push(curselectedplayer);
+    //            this.unselectedplayers = this.players.filter(player=> !this.playedplayers.includes(player));
+    //        }
+    //    }
 
-        return this.selectedPlayers;
-    }
+    //    return this.selectedPlayers;
+    //}
 
     /**
      * Removes old points from each player's score
      */
-    shiftScores(){
+    //shiftScores(){
 
-        for(let i = 0; i < this.players.length; i++)
-        {
-            this.players[i].score.ShiftScores();
-        }
+    //    for(let i = 0; i < this.players.length; i++)
+    //    {
+    //        this.players[i].score.ShiftScores();
+    //    }
 
-    }
+    //}
 
     /**
      * Returns the display percentage based on the two selected players' scores
      */
     getDisplayPercentage() {
+        console.log('getdisplaypercentage currently does nothing, you should probably check that out');
         // Array destructuring to extract player scores
-        //const [score1, score2] = this.selectedPlayers.map(player => {player.score.SumPoints();});
+        ////const [score1, score2] = this.selectedPlayers.map(player => {player.score.SumPoints();});
+        //player.message.currentMessage
+        //let score1 = this.selectedUsers[0].score.SumPoints();
+        //let score2 = this.selectedUsers[1].score.SumPoints();
 
-        let score1 = this.selectedPlayers[0].score.SumPoints();
-        let score2 = this.selectedPlayers[1].score.SumPoints();
-
-        if (score1 == 0 && score2 == 0) {
-            return .5;
-        }
-        return score2 / (score1 + score2);
+        //if (score1 == 0 && score2 == 0) {
+        //    return .5;
+        //}
+        //return score2 / (score1 + score2);
     }
 
     /**
      * Get and return a random category, while also removing it from the categories array
      * @returns {String} the category
      */
-    getAndRemoveRandomCategory() {
-        let remIndex = parseInt(Math.random() * this.categories.length);
-        return this.categories.splice(remIndex, 1)[0];
-    }
+    //getAndRemoveRandomCategory() {
+    //    let remIndex = parseInt(Math.random() * this.categories.length);
+    //    return this.categories.splice(remIndex, 1)[0];
+    //}
 }
 module.exports = Room;
